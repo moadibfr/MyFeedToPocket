@@ -1,0 +1,27 @@
+feeds:
+    - url: "http://feeds.gawker.com/io9/full"
+      tags: [io9, Entertainement]
+
+    - url: "http://feeds.gawker.com/jezebel/full"
+      tags: [Jezebel, Entertainement]
+
+    - url: "http://feeds.boingboing.net/boingboing/iBag"
+      tags: [BoingBoing, Entertainement]
+
+    - url: "http://feeds.arstechnica.com/arstechnica/index/"
+      tags: [Arstechnica, Tech]
+
+    - url: "http://www.theverge.com/rss/full.xml"
+      tags: [TheVerge, Tech]
+
+    - url: "http://feeds.feedburner.com/DilbertDailyStrip"
+      tags: [Dilbert, Comics]
+
+    - url: "http://xkcd.com/rss.xml"
+      tags: [XKCD, Comics]
+
+    - url: "http://oglaf.com/feeds/rss/"
+      tags: [Oglaf, Comics]
+
+    - url: "http://www.rue89.com/homepage/feed"
+      tags: [Rue89, Actu]
