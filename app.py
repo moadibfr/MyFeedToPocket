@@ -36,7 +36,6 @@ stream = open('feeds.yaml', 'r')
 feeds = yaml.load(stream)
 
 for feed in feeds['feeds']:
-    print feed;
     feed_date = 0
     if feed['url'] in db:
     	feed_date = float(db[feed['url']])
@@ -51,12 +50,11 @@ for feed in feeds['feeds']:
     	elif hasattr(entry, 'created_parsed'):
     		struct = entry.created_parsed
     	else:
-    		print "Entry has no date, ignore..."
+    		#print "Entry has no date, ignore..."
     		continue
     	date = mktime(struct)
     	if feed_date < date:
-    		print entry['title']
-			pocket_instance.add(url=entry['link'], title=entry['title'], tags=','.join(feed["tags"]),wait=False)
+                pocket_instance.add(url=entry['link'], title=entry['title'], tags=','.join(feed["tags"]),wait=False)
     		if (new_feed_date < date):
     			new_feed_date = date
     db[feed['url']] = str(new_feed_date)
