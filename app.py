@@ -6,6 +6,8 @@ import config
 import pocket
 from pocket import Pocket
 import dbm
+from time import mktime
+from datetime import datetime
 
 # Open database, creating it if necessary.
 db = dbm.open('cache', 'c')
@@ -27,7 +29,6 @@ if not "access_token" in db :
 		exit(1)
 	db["access_token"] = user_credentials["access_token"]
 
-print 'access_token ' + db["access_token"]
 pocket_instance = pocket.Pocket(config.consumer_key, db["access_token"])
 
 
@@ -36,10 +37,28 @@ feeds = yaml.load(stream)
 
 for feed in feeds['feeds']:
     print feed;
+    feed_date = 0
+    if feed['url'] in db:
+    	feed_date = float(db[feed['url']])
+    new_feed_date = feed_date
     content = feedparser.parse(feed['url'])
     for entry in content['entries']:
-    	print entry['title'] 
-    	print entry['link']
-    	pocket_instance.bulk_add(url=entry['link'], title=entry['title'], tags=','.join(feed["tags"]),wait=False)
+    	struct = None
+    	if hasattr(entry, 'updated_parsed'):
+    		struct = entry.updated_parsed
+    	elif hasattr(entry, 'published_parsed'):
+    		struct = entry.published_parsed
+    	elif hasattr(entry, 'created_parsed'):
+    		struct = entry.created_parsed
+    	else:
+    		print "Entry has no date, ignore..."
+    		continue
+    	date = mktime(struct)
+    	if feed_date < date:
+    		print entry['title']
+			pocket_instance.add(url=entry['link'], title=entry['title'], tags=','.join(feed["tags"]),wait=False)
+    		if (new_feed_date < date):
+    			new_feed_date = date
+    db[feed['url']] = str(new_feed_date)
 
 db.close();
