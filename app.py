@@ -36,12 +36,19 @@ stream = open('feeds.yaml', 'r')
 feeds = yaml.load(stream)
 
 for feed in feeds['feeds']:
+    if not 'url' in feed:
+        print str(feed) + " Seems to have no url..."
+        continue
+
     feed_date = 0
     if feed['url'] in db:
     	feed_date = float(db[feed['url']])
     new_feed_date = feed_date
+
     content = feedparser.parse(feed['url'])
     for entry in content['entries']:
+        if (not 'link' in entry):
+            continue
     	struct = None
     	if hasattr(entry, 'updated_parsed'):
     		struct = entry.updated_parsed
@@ -54,7 +61,15 @@ for feed in feeds['feeds']:
     		continue
     	date = mktime(struct)
     	if feed_date < date:
-                pocket_instance.add(url=entry['link'], title=entry['title'], tags=','.join(feed["tags"]),wait=False)
+                entry_tags = ""
+                if 'tags' in feed:
+                    entry_tags = ','.join(feed["tags"])
+
+                if 'title' in entry and entry['title']:
+                    pocket_instance.add(url=entry['link'], title=entry['title'], tags=entry_tags, wait=False)
+                else :
+                    pocket_instance.add(url=entry['link'], tags=entry_tags, wait=False)
+
     		if (new_feed_date < date):
     			new_feed_date = date
     db[feed['url']] = str(new_feed_date)
